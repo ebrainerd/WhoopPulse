@@ -233,6 +233,47 @@ free Expo Go workflow working on iOS.)
 
 ---
 
+## Deployment
+
+### Web / PWA (free, instant)
+
+The app exports to a static SPA, so any static host works. A `vercel.json` is
+included (build `expo export --platform web` → `dist`, with SPA rewrites).
+
+1. Push the repo to GitHub and import it at [vercel.com](https://vercel.com) (or
+   Netlify / Cloudflare Pages).
+2. Add your `EXPO_PUBLIC_*` variables as **Build Environment Variables** in the
+   host dashboard (they're inlined at build time).
+3. Deploy. Friends open the URL and tap **Share → Add to Home Screen** on iOS.
+4. In the Whoop dashboard, add `https://your-domain/whoop-callback` as a redirect
+   URI, and add the domain to Supabase Auth → URL configuration.
+
+> Note: push notifications are not supported on iOS web; everything else works.
+
+Locally you can preview a production web build with:
+
+```bash
+npm run build:web && npx serve dist
+```
+
+### iOS via TestFlight (native, ~$99/yr)
+
+Requires an [Apple Developer Program](https://developer.apple.com/programs/)
+membership and [EAS](https://docs.expo.dev/eas/) (`npm i -g eas-cli`). An
+`eas.json` with `development` / `preview` / `production` profiles is included.
+
+```bash
+eas login
+eas build:configure
+npm run build:ios     # cloud build (production profile)
+npm run submit:ios    # upload to App Store Connect / TestFlight
+```
+
+Then in App Store Connect → TestFlight, enable **external testing** to get a
+public invite link you can share with friends (up to 10,000 testers, no per-device
+registration). Remember to add the native redirect URI `whooprj://whoop-callback`
+to your Whoop app.
+
 ## Scripts
 
 | Command             | Description                          |
