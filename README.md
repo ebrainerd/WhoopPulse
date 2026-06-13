@@ -25,18 +25,18 @@ stress. Dark, minimal UI.
   score move in real time.
 - **Accuracy tracking** — predictions are reconciled against actual recovery so
   you can see how accurate the model has been (`±6 pts lately`).
-- **Insights** — top drivers (correlations), long-term trends, and CSV export.
+- **Morning recap** — a daily briefing: yesterday's predicted-vs-actual, model
+  accuracy, whether following actions helped, and today's top 3 actions.
 - **Personalized model** — a per-user ridge regression learns your own factor
   weights from history and blends with the rule engine as data accumulates.
-- **Protocol experiments** — structured n-of-1 self-tests ("no alcohol for 14
-  days") that measure a behavior's effect on recovery vs your baseline.
-- **Morning briefing** — a daily screen: yesterday's predicted-vs-actual, model
-  accuracy, whether following actions helped, and today's top 3 actions.
-- **Bloodwork analysis** — enter a comprehensive lab panel and get flagged
-  markers with supplement / nutrition / exercise / mindfulness / lifestyle
-  guidance (educational, not medical advice).
-- **Fasting tracker** — start a fast with a live timer, target ring, and the
-  metabolic stages your body moves through (fed → ketosis → autophagy …).
+- **Lightweight trends** — recovery over time and predicted-vs-actual accuracy.
+
+### MVP scope (intentionally narrow)
+
+v1 is the tightest possible **daily recovery loop** for Whoop users. The
+following are deliberately **out of scope** until the loop proves retention:
+bloodwork analysis, fasting tracker, n-of-1 experiments, coaching/sharing, deep
+history/insights, Oura / multi-device, broad nutrition logging, and goal setting.
 
 ---
 
@@ -62,20 +62,20 @@ app/                       # Expo Router screens
   (auth)/sign-in.tsx       # Email/password auth
   onboarding.tsx           # Profile, Whoop connect, notifications
   (tabs)/
-    index.tsx              # Dashboard: prediction card, best actions, Whoop, weather
-    journal.tsx            # Daily journal form (live prediction)
-    history.tsx            # Trends + predicted-vs-actual charts
-    insights.tsx           # Drivers, observations, export
-  what-if.tsx              # What-If simulator (modal)
+    index.tsx              # Today: morning recap, prediction card, best actions, Whoop
+    journal.tsx            # Fast daily journal (live prediction)
+    trends.tsx             # Lightweight recovery + predicted-vs-actual charts
+  briefing.tsx             # Morning recap (auto-presented once/day)
+  what-if.tsx              # Focused What-If simulator (top levers)
   settings.tsx             # Whoop sync, notifications, sign out
 src/
   prediction/              # Rule-based + statistical prediction engine
     factors.ts             #   factor rules (+ recommendations)
     engine.ts              #   baseline, calibration, confidence, accuracy
-    insights.ts            #   correlations + trend observations
+    regression.ts          #   per-user ridge regression (personalization)
   services/                # Supabase data access (journal, whoop, predictions, …)
   context/                 # AuthContext + DataContext
-  components/              # UI primitives, charts, dashboard cards, journal form
+  components/ui/BackgroundScreen.tsx  # nature photo background + scrim
   hooks/useWhoopAuth.ts    # Whoop OAuth flow
 supabase/
   migrations/0001_init.sql # Schema + RLS + triggers
@@ -125,9 +125,6 @@ Edge Function can reuse the logic for heavier server-side computation later.
 | `predictions`         | `date, predicted_score, actual_score, confidence, baseline, factors` |
 | `recommendations_log` | Which actions were suggested and followed                    |
 | `weather_daily`       | Cached forecast snapshots                                    |
-| `experiments`         | n-of-1 self-tests (condition, window, status, result)       |
-| `fasts`               | Fasting sessions (start/end, target hours)                  |
-| `bloodwork_panels`    | Lab panels (`markers` JSON) for analysis                    |
 
 All tables are protected by **Row Level Security** (owner-only access). A trigger
 auto-creates a `profiles` row on signup.
@@ -148,8 +145,8 @@ npm install
 ### 2. Create a Supabase project
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. Apply the schema: run the SQL in `supabase/migrations/` (`0001_init.sql` then
-   `0002_features.sql`) in the Supabase SQL editor, or with the CLI:
+2. Apply the schema: run the SQL in `supabase/migrations/0001_init.sql` in the
+   Supabase SQL editor, or with the CLI:
    ```bash
    supabase link --project-ref <your-ref>
    supabase db push

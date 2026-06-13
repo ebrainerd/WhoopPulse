@@ -8,8 +8,8 @@ import {
   View,
 } from 'react-native';
 
+import { BackgroundScreen } from '@/components/ui/BackgroundScreen';
 import { Button } from '@/components/ui/Button';
-import { Screen } from '@/components/ui/Screen';
 import { useAuth } from '@/context/AuthContext';
 import { colors } from '@/theme/colors';
 
@@ -48,7 +48,7 @@ export default function SignIn() {
   };
 
   return (
-    <Screen scroll={false}>
+    <BackgroundScreen image="coast" scroll={false}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         className="flex-1 justify-center"
@@ -120,6 +120,6 @@ export default function SignIn() {
           </Text>
         </Pressable>
       </KeyboardAvoidingView>
-    </Screen>
+    </BackgroundScreen>
   );
 }

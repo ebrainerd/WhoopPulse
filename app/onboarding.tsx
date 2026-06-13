@@ -2,9 +2,9 @@ import { Redirect, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
+import { BackgroundScreen } from '@/components/ui/BackgroundScreen';
 import { Button } from '@/components/ui/Button';
 import { Card, CardTitle } from '@/components/ui/Card';
-import { Screen } from '@/components/ui/Screen';
 import { Splash } from '@/components/ui/Splash';
 import { env, isWhoopConfigured } from '@/config/env';
 import { useAuth } from '@/context/AuthContext';
@@ -69,7 +69,7 @@ export default function Onboarding() {
   const connected = Boolean(whoopConnection?.connectedAt);
 
   return (
-    <Screen>
+    <BackgroundScreen image="forest">
       <View className="mt-6 mb-6">
         <Text className="text-accent text-3xl font-extrabold">Welcome</Text>
         <Text className="text-text-muted mt-2">
@@ -147,6 +147,6 @@ export default function Onboarding() {
       <View className="mt-6">
         <Button title="Start journaling" loading={busy} onPress={finish} />
       </View>
-    </Screen>
+    </BackgroundScreen>
   );
 }

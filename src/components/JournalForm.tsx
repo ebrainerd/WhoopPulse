@@ -1,4 +1,4 @@
-import { TextInput, View } from 'react-native';
+import { View } from 'react-native';
 
 import {
   Field,
@@ -9,45 +9,49 @@ import {
   ToggleRow,
 } from '@/components/form/Controls';
 import { Card } from '@/components/ui/Card';
-import { Chip } from '@/components/ui/Chip';
-import { colors } from '@/theme/colors';
-import {
-  SUPPLEMENTS,
-  TRAINING_TYPES,
-  type JournalEntry,
-} from '@/types/models';
+import { TRAINING_TYPES, type JournalEntry, type TrainingType } from '@/types/models';
 
 interface JournalFormProps {
   value: JournalEntry;
   onChange: (next: JournalEntry) => void;
 }
 
+// MVP keeps training to the highest-signal options.
+const MVP_TRAINING: { value: TrainingType; label: string }[] = TRAINING_TYPES.filter(
+  (t) => t.value !== 'active_recovery',
+);
+
+/**
+ * Minimal, high-signal daily journal. Designed to complete in <30 seconds:
+ * training, alcohol, two supplement toggles, wind-down time, and lightweight
+ * energy/mood/stress — plus two optional levers.
+ */
 export function JournalForm({ value, onChange }: JournalFormProps) {
   const set = <K extends keyof JournalEntry>(key: K, v: JournalEntry[K]) =>
     onChange({ ...value, [key]: v });
 
-  const toggleSupplement = (s: string) => {
-    const has = value.supplements.includes(s);
+  const toggleMagnesium = () => {
+    const has = value.supplements.includes('magnesium');
     set(
       'supplements',
       has
-        ? value.supplements.filter((x) => x !== s)
-        : [...value.supplements, s],
+        ? value.supplements.filter((x) => x !== 'magnesium')
+        : [...value.supplements, 'magnesium'],
     );
   };
 
   return (
     <View>
       <Card className="mb-4">
-        <Field label="Training" hint="What did you train today?">
+        <Field label="Training">
           <Segmented
-            options={TRAINING_TYPES.map((t) => ({ label: t.label, value: t.value }))}
+            options={MVP_TRAINING}
             value={value.trainingType}
             onChange={(v) => set('trainingType', v)}
           />
         </Field>
         {value.trainingType !== 'rest' && (
-          <Field label="Training intensity">
+          <Field label="Intensity">
             <Scale5
               value={value.trainingIntensity}
               onChange={(v) => set('trainingIntensity', v)}
@@ -56,17 +60,10 @@ export function JournalForm({ value, onChange }: JournalFormProps) {
             />
           </Field>
         )}
-        <Field label="Training notes">
-          <NotesInput
-            value={value.trainingNotes}
-            placeholder="Lifts, sets, PRs, how it felt…"
-            onChange={(t) => set('trainingNotes', t)}
-          />
-        </Field>
       </Card>
 
       <Card className="mb-4">
-        <Field label="Alcohol" hint="Number of drinks today.">
+        <Field label="Alcohol" hint="Drinks today — the single biggest lever.">
           <Stepper
             value={value.alcoholDrinks}
             onChange={(v) => set('alcoholDrinks', v)}
@@ -74,59 +71,29 @@ export function JournalForm({ value, onChange }: JournalFormProps) {
             max={20}
           />
         </Field>
-        <Field label="Last meal" hint="When you finished eating.">
-          <TimeField
-            value={value.lastMealTime}
-            onChange={(v) => set('lastMealTime', v)}
-            quickTimes={['18:00', '19:00', '20:00', '21:00', '22:00']}
+        <View className="gap-1">
+          <ToggleRow
+            label="Creatine"
+            value={value.creatine}
+            onChange={(v) => set('creatine', v)}
           />
-        </Field>
-        <Field label="Planned fasting window (hours)">
-          <Stepper
-            value={value.fastingHours ?? 0}
-            onChange={(v) => set('fastingHours', v === 0 ? null : v)}
-            min={0}
-            max={24}
-            suffix="h"
+          <ToggleRow
+            label="Magnesium"
+            value={value.supplements.includes('magnesium')}
+            onChange={toggleMagnesium}
           />
-        </Field>
-        <Field label="Water (liters)">
-          <Stepper
-            value={value.waterLiters ?? 0}
-            onChange={(v) => set('waterLiters', v === 0 ? null : v)}
-            min={0}
-            max={8}
-            step={0.5}
-            suffix="L"
-          />
-        </Field>
-        <ToggleRow
-          label="Caffeine after 2 PM"
-          value={value.caffeineAfter2pm}
-          onChange={(v) => set('caffeineAfter2pm', v)}
-        />
+        </View>
       </Card>
 
       <Card className="mb-4">
-        <Field label="Supplements" hint="Tap all you took today.">
-          <View className="flex-row flex-wrap">
-            {SUPPLEMENTS.map((s) => (
-              <Chip
-                key={s.value}
-                label={s.label}
-                selected={
-                  value.supplements.includes(s.value) ||
-                  (s.value === 'creatine' && value.creatine)
-                }
-                onPress={() => {
-                  if (s.value === 'creatine') {
-                    set('creatine', !value.creatine);
-                  }
-                  toggleSupplement(s.value);
-                }}
-              />
-            ))}
-          </View>
+        <Field
+          label="Wind-down / lights out"
+          hint="When you start winding down for bed."
+        >
+          <TimeField
+            value={value.winddownTime}
+            onChange={(v) => set('winddownTime', v)}
+          />
         </Field>
       </Card>
 
@@ -136,7 +103,7 @@ export function JournalForm({ value, onChange }: JournalFormProps) {
             value={value.energy}
             onChange={(v) => set('energy', v)}
             lowLabel="Drained"
-            highLabel="Energized"
+            highLabel="Wired"
           />
         </Field>
         <Field label="Mood">
@@ -147,7 +114,7 @@ export function JournalForm({ value, onChange }: JournalFormProps) {
             highLabel="Great"
           />
         </Field>
-        <Field label="Work stress">
+        <Field label="Stress">
           <Scale5
             value={value.workStress}
             onChange={(v) => set('workStress', v)}
@@ -158,42 +125,27 @@ export function JournalForm({ value, onChange }: JournalFormProps) {
       </Card>
 
       <Card className="mb-4">
-        <Field label="Wind-down time" hint="When you started winding down for bed.">
-          <TimeField
-            value={value.winddownTime}
-            onChange={(v) => set('winddownTime', v)}
-          />
-        </Field>
-        <Field label="Notes">
-          <NotesInput
-            value={value.notes}
-            placeholder="Anything else worth remembering…"
-            onChange={(t) => set('notes', t)}
-          />
+        <Field label="Optional">
+          <View className="gap-2">
+            <ToggleRow
+              label="Caffeine after 2 PM"
+              value={value.caffeineAfter2pm}
+              onChange={(v) => set('caffeineAfter2pm', v)}
+            />
+            <View>
+              <View className="flex-row items-center justify-between">
+                <View className="flex-1">
+                  <ToggleRow
+                    label="Hydrated (3L+)"
+                    value={(value.waterLiters ?? 0) >= 3}
+                    onChange={(v) => set('waterLiters', v ? 3 : null)}
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
         </Field>
       </Card>
     </View>
-  );
-}
-
-function NotesInput({
-  value,
-  placeholder,
-  onChange,
-}: {
-  value: string;
-  placeholder: string;
-  onChange: (t: string) => void;
-}) {
-  return (
-    <TextInput
-      value={value}
-      onChangeText={onChange}
-      placeholder={placeholder}
-      placeholderTextColor={colors.textFaint}
-      multiline
-      className="bg-bg-input border border-border rounded-xl px-4 py-3 text-text min-h-[64px]"
-      style={{ textAlignVertical: 'top' }}
-    />
   );
 }

@@ -7,9 +7,9 @@ import { BestActions } from '@/components/dashboard/BestActions';
 import { PredictionCard } from '@/components/dashboard/PredictionCard';
 import { WeatherCard } from '@/components/dashboard/WeatherCard';
 import { WhoopSummary } from '@/components/dashboard/WhoopSummary';
+import { BackgroundScreen } from '@/components/ui/BackgroundScreen';
 import { Button } from '@/components/ui/Button';
 import { Card, CardTitle, SectionHeader } from '@/components/ui/Card';
-import { Screen } from '@/components/ui/Screen';
 import { isWhoopConfigured } from '@/config/env';
 import { useData } from '@/context/DataContext';
 import { useWhoopAuth } from '@/hooks/useWhoopAuth';
@@ -68,7 +68,7 @@ export default function Dashboard() {
   };
 
   return (
-    <Screen refreshing={refreshing} onRefresh={refresh}>
+    <BackgroundScreen image="coast" refreshing={refreshing} onRefresh={refresh}>
       <View className="flex-row items-center justify-between mt-2 mb-4">
         <View>
           <Text className="text-text-muted text-sm">
@@ -165,57 +165,17 @@ export default function Dashboard() {
         />
       </View>
 
-      <SectionHeader title="Tools" />
-      <View className="flex-row flex-wrap gap-3">
-        <ToolButton
-          icon="🧪"
-          label="Experiments"
-          onPress={() => router.push('/experiments')}
-        />
-        <ToolButton
-          icon="🩸"
-          label="Bloodwork"
-          onPress={() => router.push('/bloodwork')}
-        />
-        <ToolButton
-          icon="⏱"
-          label="Fasting"
-          onPress={() => router.push('/(tabs)/fast')}
-        />
-        <ToolButton
-          icon="🔮"
-          label="What-If"
-          onPress={() => router.push('/what-if')}
-        />
-      </View>
-
-      <View className="mt-5 mb-2">
+      <View className="mt-6 mb-2 gap-2">
         <Button
           title={todayJournal ? 'Edit today’s journal' : 'Log today’s journal'}
           onPress={() => router.push('/(tabs)/journal')}
         />
+        <Button
+          title="What-If simulator"
+          variant="secondary"
+          onPress={() => router.push('/what-if')}
+        />
       </View>
-    </Screen>
-  );
-}
-
-function ToolButton({
-  icon,
-  label,
-  onPress,
-}: {
-  icon: string;
-  label: string;
-  onPress: () => void;
-}) {
-  return (
-    <Pressable
-      onPress={onPress}
-      className="bg-bg-card border border-border-subtle rounded-2xl p-4 items-center active:opacity-80"
-      style={{ width: '47%' }}
-    >
-      <Text className="text-2xl mb-1">{icon}</Text>
-      <Text className="text-text font-semibold">{label}</Text>
-    </Pressable>
+    </BackgroundScreen>
   );
 }
