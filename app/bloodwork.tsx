@@ -13,7 +13,7 @@ import { colors } from '@/theme/colors';
 import type { BloodworkPanel } from '@/types/models';
 import { prettyDate, todayKey } from '@/utils/date';
 
-const CATEGORIES = Array.from(new Set(MARKERS.map((m) => m.category)));
+const CATEGORIES = Array.from(new Set(MARKERS.map((m) => m.category))); 
 
 export default function Bloodwork() {
   const router = useRouter();
