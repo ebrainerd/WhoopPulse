@@ -33,7 +33,7 @@ stress. Dark, minimal UI.
 
 | Area          | Choice                                             |
 | ------------- | -------------------------------------------------- |
-| App           | Expo (SDK 56), React Native, TypeScript            |
+| App           | Expo (SDK 54), React Native, TypeScript            |
 | Routing       | Expo Router (file-based)                            |
 | Styling       | NativeWind (Tailwind) — dark minimal theme         |
 | Backend       | Supabase (Auth, Postgres + RLS, Edge Functions)    |
@@ -197,6 +197,14 @@ npm run android  # Android emulator
 
 If Supabase env vars are missing, the app shows a friendly setup screen instead
 of crashing.
+
+### Running on a physical iPhone
+
+This project targets **Expo SDK 54**, which is the version supported by the
+**Expo Go** app on the Apple App Store. Just run `npm start` and scan the QR code
+with Expo Go. (Newer SDKs like 56 are not yet available in App Store Expo Go, so
+they require a custom development build instead — staying on SDK 54 keeps the
+free Expo Go workflow working on iOS.)
 
 ---
 
