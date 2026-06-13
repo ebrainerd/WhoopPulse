@@ -11,7 +11,8 @@ import {
 
 interface RecoveryRecord {
   cycle_id: number;
-  sleep_id: number;
+  // v2: sleep_id is a UUID string (was an integer in v1).
+  sleep_id: string;
   score?: {
     recovery_score?: number;
     resting_heart_rate?: number;
@@ -30,7 +31,8 @@ interface CycleRecord {
 }
 
 interface SleepRecord {
-  id: number;
+  // v2: sleep id is a UUID string.
+  id: string;
   score?: {
     sleep_performance_percentage?: number;
     sleep_efficiency_percentage?: number;

@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 import type { WhoopConnection, WhoopCycle } from '@/types/models';
 
+import { describeFunctionError } from './functionError';
 import { mapCycleRow } from './mappers';
 
 export async function listCycles(
@@ -58,7 +59,7 @@ export async function triggerWhoopSync(): Promise<{ synced: number }> {
   const { data, error } = await supabase.functions.invoke('whoop-sync', {
     body: { days: 14 },
   });
-  if (error) throw error;
+  if (error) throw new Error(await describeFunctionError(error, 'Whoop sync failed.'));
   return { synced: (data as { synced?: number })?.synced ?? 0 };
 }
 
@@ -74,5 +75,7 @@ export async function exchangeWhoopCode(
   const { error } = await supabase.functions.invoke('whoop-auth', {
     body: { code, redirect_uri: redirectUri, code_verifier: codeVerifier },
   });
-  if (error) throw error;
+  if (error) {
+    throw new Error(await describeFunctionError(error, 'Whoop connection failed.'));
+  }
 }

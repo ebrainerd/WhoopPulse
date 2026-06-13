@@ -2,7 +2,9 @@
 
 export const WHOOP_TOKEN_URL =
   'https://api.prod.whoop.com/oauth/oauth2/token';
-export const WHOOP_API = 'https://api.prod.whoop.com/developer/v1';
+// WHOOP API v2. The v1 API has been fully deprecated and now returns 404s.
+// v2 keeps the same field shapes but uses UUIDs for sleep/workout IDs.
+export const WHOOP_API = 'https://api.prod.whoop.com/developer/v2';
 
 export interface WhoopTokens {
   access_token: string;
