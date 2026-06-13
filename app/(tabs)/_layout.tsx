@@ -31,6 +31,7 @@ export default function TabsLayout() {
         },
         tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
         sceneStyle: { backgroundColor: colors.bg },
+        animation: 'shift',
       }}
     >
       <Tabs.Screen
@@ -48,24 +49,10 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="fast"
+        name="trends"
         options={{
-          title: 'Fast',
-          tabBarIcon: ({ color }) => <TabIcon icon="⏱" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="history"
-        options={{
-          title: 'History',
+          title: 'Trends',
           tabBarIcon: ({ color }) => <TabIcon icon="📈" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="insights"
-        options={{
-          title: 'Insights',
-          tabBarIcon: ({ color }) => <TabIcon icon="✦" color={color} />,
         }}
       />
     </Tabs>

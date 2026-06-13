@@ -9,7 +9,10 @@ interface CardProps {
 export function Card({ children, className = '' }: CardProps) {
   return (
     <View
-      className={`rounded-2xl bg-bg-card border border-border-subtle p-4 ${className}`}
+      className={`rounded-2xl border border-border-subtle p-4 ${className}`}
+      // Translucent so nature backgrounds subtly show through while text stays
+      // fully readable.
+      style={{ backgroundColor: 'rgba(18,24,33,0.74)' }}
     >
       {children}
     </View>

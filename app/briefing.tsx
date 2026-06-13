@@ -3,8 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { ScoreRing } from '@/components/ScoreRing';
+import { BackgroundScreen } from '@/components/ui/BackgroundScreen';
 import { Card, CardTitle, SectionHeader } from '@/components/ui/Card';
-import { Screen } from '@/components/ui/Screen';
 import { useAuth } from '@/context/AuthContext';
 import { useData } from '@/context/DataContext';
 import { predictionAccuracy } from '@/prediction/engine';
@@ -68,7 +68,7 @@ export default function Briefing() {
   const topActions = livePrediction?.recommendations.slice(0, 3) ?? [];
 
   return (
-    <Screen>
+    <BackgroundScreen image="coast">
       <View className="flex-row items-center justify-between mt-2 mb-4">
         <View>
           <Text className="text-text-muted text-sm">{todayJournalGreeting()}</Text>
@@ -203,6 +203,6 @@ export default function Briefing() {
         {profile?.fullName ? `Have a great day, ${profile.fullName}.` : ''}
       </Text>
       <View className="h-4" />
-    </Screen>
+    </BackgroundScreen>
   );
 }
