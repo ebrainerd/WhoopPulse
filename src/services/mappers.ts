@@ -1,5 +1,9 @@
 import type { Database } from '@/types/database';
 import type {
+  BloodworkPanel,
+  Experiment,
+  ExperimentStatus,
+  Fast,
   JournalEntry,
   Prediction,
   PredictionFactor,
@@ -123,6 +127,49 @@ export function mapProfileRow(row: Tables['profiles']['Row']): Profile {
     locationName: row.location_name,
     onboardedAt: row.onboarded_at,
     baselineRecovery: row.baseline_recovery,
+  };
+}
+
+export function mapExperimentRow(
+  row: Tables['experiments']['Row'],
+): Experiment {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    title: row.title,
+    hypothesis: row.hypothesis,
+    conditionKey: row.condition_key,
+    startDate: row.start_date,
+    endDate: row.end_date,
+    targetDays: row.target_days,
+    status: row.status as ExperimentStatus,
+    resultSummary: row.result_summary,
+    createdAt: row.created_at,
+  };
+}
+
+export function mapFastRow(row: Tables['fasts']['Row']): Fast {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    startAt: row.start_at,
+    endAt: row.end_at,
+    targetHours: row.target_hours,
+    note: row.note,
+    createdAt: row.created_at,
+  };
+}
+
+export function mapBloodworkRow(
+  row: Tables['bloodwork_panels']['Row'],
+): BloodworkPanel {
+  return {
+    id: row.id,
+    userId: row.user_id,
+    date: row.date,
+    markers: (row.markers as Record<string, number>) ?? {},
+    notes: row.notes,
+    createdAt: row.created_at,
   };
 }
 

@@ -152,8 +152,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
       yesterdayCycle: cycles.length > 0 ? cycles[cycles.length - 1] : null,
       weather: tomorrowWeather,
       pastPredictions: predictions,
+      history: { journals, cycles },
     }),
-    [cycles, tomorrowWeather, predictions],
+    [cycles, tomorrowWeather, predictions, journals],
   );
 
   const livePrediction = useMemo<PredictionResult | null>(() => {

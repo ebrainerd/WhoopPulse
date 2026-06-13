@@ -1,5 +1,6 @@
+import { useRouter } from 'expo-router';
 import { useMemo } from 'react';
-import { Share, Text, View } from 'react-native';
+import { Pressable, Share, Text, View } from 'react-native';
 
 import { BarChart, type Bar } from '@/components/charts/BarChart';
 import { Button } from '@/components/ui/Button';
@@ -11,6 +12,7 @@ import { predictionAccuracy } from '@/prediction/engine';
 import { colors } from '@/theme/colors';
 
 export default function Insights() {
+  const router = useRouter();
   const { journals, cycles, predictions, refreshing, refresh, profile } = useData();
 
   const drivers = useMemo(
@@ -57,6 +59,21 @@ export default function Insights() {
         <Text className="text-text-muted text-sm mt-0.5">
           {profile?.fullName ? `${profile.fullName}’s ` : ''}personalized patterns
         </Text>
+      </View>
+
+      <View className="flex-row gap-3 mb-4">
+        <LinkCard
+          icon="🧪"
+          label="Experiments"
+          hint="Run self-tests"
+          onPress={() => router.push('/experiments')}
+        />
+        <LinkCard
+          icon="🩸"
+          label="Bloodwork"
+          hint="Labs + advice"
+          onPress={() => router.push('/bloodwork')}
+        />
       </View>
 
       {accuracy.count >= 3 && accuracy.mae != null && (
@@ -148,5 +165,28 @@ export default function Insights() {
       </Card>
       <View className="h-4" />
     </Screen>
+  );
+}
+
+function LinkCard({
+  icon,
+  label,
+  hint,
+  onPress,
+}: {
+  icon: string;
+  label: string;
+  hint: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      className="flex-1 bg-bg-card border border-border-subtle rounded-2xl p-4 active:opacity-80"
+    >
+      <Text className="text-2xl mb-1">{icon}</Text>
+      <Text className="text-text font-bold">{label}</Text>
+      <Text className="text-text-muted text-xs">{hint}</Text>
+    </Pressable>
   );
 }

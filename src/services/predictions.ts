@@ -109,6 +109,27 @@ export async function listRecommendationLogs(
   }));
 }
 
+export async function listRecommendationLogsSince(
+  userId: string,
+  sinceDate: string,
+): Promise<RecommendationLog[]> {
+  const { data, error } = await supabase
+    .from('recommendations_log')
+    .select('*')
+    .eq('user_id', userId)
+    .gte('date', sinceDate);
+  if (error) throw error;
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    userId: row.user_id,
+    date: row.date,
+    actionKey: row.action_key,
+    title: row.title,
+    impactPoints: row.impact_points,
+    followed: row.followed,
+  }));
+}
+
 export async function setRecommendationFollowed(
   userId: string,
   date: string,

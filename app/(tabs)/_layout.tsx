@@ -48,6 +48,13 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="fast"
+        options={{
+          title: 'Fast',
+          tabBarIcon: ({ color }) => <TabIcon icon="⏱" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="history"
         options={{
           title: 'History',

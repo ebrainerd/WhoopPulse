@@ -11,8 +11,9 @@ import { todayKey } from '@/utils/date';
 import { clamp, ewma, meanAbsoluteError, mean, round } from '@/utils/stats';
 
 import { evaluateRules, type PredictionContext } from './factors';
+import { fitRecoveryModel, predictWithModel } from './regression';
 
-export const MODEL_VERSION = 'rule+calib-v1';
+export const MODEL_VERSION = 'rule+calib+ridge-v2';
 
 const DEFAULT_BASELINE = 60;
 
@@ -29,6 +30,8 @@ export interface PredictInput {
   weather: WeatherForecast | null;
   /** Past predictions with known actuals — used to calibrate + size confidence. */
   pastPredictions?: Prediction[];
+  /** Full paired history used to fit the personalized regression model. */
+  history?: { journals: JournalEntry[]; cycles: WhoopCycle[] };
 }
 
 export interface PredictionResult {
@@ -100,15 +103,35 @@ export function runPrediction(input: PredictInput): PredictionResult {
     });
   }
 
-  const predictedScore = clamp(
-    Math.round(baseline + sumImpacts + calibration),
-    1,
-    99,
-  );
-  const confidence = computeConfidence(
+  // Rule-based prediction (transparent, drives the recommendations).
+  const rulePrediction = clamp(baseline + sumImpacts + calibration, 1, 99);
+  const ruleConfidence = computeConfidence(
     input.pastPredictions ?? [],
     input.recentCycles,
   );
+
+  // Personalized statistical layer: blend in a ridge-regression prediction
+  // fitted on the user's own history, weighted by how much data we have.
+  let predictedScore = Math.round(rulePrediction);
+  let confidence = ruleConfidence;
+  const model = input.history
+    ? fitRecoveryModel(input.history.journals, input.history.cycles)
+    : null;
+  if (model) {
+    const regPrediction = clamp(predictWithModel(model, input.journal), 1, 99);
+    const w = clamp((model.n - 12) / 28, 0, 0.65); // grows with data volume
+    const blended = w * regPrediction + (1 - w) * rulePrediction;
+    predictedScore = clamp(Math.round(blended), 1, 99);
+    const regConfidence = clamp(Math.round(model.mae * 1.25), 4, 20);
+    confidence = Math.round(w * regConfidence + (1 - w) * ruleConfidence);
+    if (Math.abs(predictedScore - Math.round(rulePrediction)) >= 1) {
+      allFactors.push({
+        key: 'personal_model',
+        label: 'Personalized model',
+        impact: predictedScore - Math.round(rulePrediction),
+      });
+    }
+  }
 
   // Sort recommendations by realizable impact, then priority, top 5.
   const sortedRecs = recommendations

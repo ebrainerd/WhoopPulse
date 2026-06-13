@@ -1,5 +1,6 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 
 import { BestActions } from '@/components/dashboard/BestActions';
@@ -13,6 +14,7 @@ import { isWhoopConfigured } from '@/config/env';
 import { useData } from '@/context/DataContext';
 import { useWhoopAuth } from '@/hooks/useWhoopAuth';
 import { predictionAccuracy } from '@/prediction/engine';
+import { todayKey } from '@/utils/date';
 import { todayJournalGreeting } from '@/utils/greeting';
 
 export default function Dashboard() {
@@ -39,6 +41,19 @@ export default function Dashboard() {
   const latestCycle = cycles.length > 0 ? cycles[cycles.length - 1] : null;
   const accuracy = useMemo(() => predictionAccuracy(predictions), [predictions]);
   const connected = Boolean(whoopConnection?.connectedAt);
+
+  // Auto-present the morning briefing once per day (when we have real data).
+  useEffect(() => {
+    if (cycles.length === 0) return;
+    const key = `briefing-seen-${todayKey()}`;
+    AsyncStorage.getItem(key).then((seen) => {
+      if (!seen) {
+        AsyncStorage.setItem(key, '1');
+        router.push('/briefing');
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cycles.length]);
 
   const doSync = async () => {
     setSyncing(true);
@@ -79,6 +94,20 @@ export default function Dashboard() {
           </Text>
         </View>
       )}
+
+      <Pressable
+        onPress={() => router.push('/briefing')}
+        className="rounded-2xl bg-bg-card border border-border-subtle p-4 mb-4 flex-row items-center active:opacity-80"
+      >
+        <Text className="text-2xl mr-3">☀️</Text>
+        <View className="flex-1">
+          <Text className="text-text font-bold">Morning Briefing</Text>
+          <Text className="text-text-muted text-xs">
+            Yesterday’s result, accuracy, and today’s top actions
+          </Text>
+        </View>
+        <Text className="text-text-faint text-lg">›</Text>
+      </Pressable>
 
       {livePrediction && (
         <PredictionCard
@@ -136,6 +165,30 @@ export default function Dashboard() {
         />
       </View>
 
+      <SectionHeader title="Tools" />
+      <View className="flex-row flex-wrap gap-3">
+        <ToolButton
+          icon="🧪"
+          label="Experiments"
+          onPress={() => router.push('/experiments')}
+        />
+        <ToolButton
+          icon="🩸"
+          label="Bloodwork"
+          onPress={() => router.push('/bloodwork')}
+        />
+        <ToolButton
+          icon="⏱"
+          label="Fasting"
+          onPress={() => router.push('/(tabs)/fast')}
+        />
+        <ToolButton
+          icon="🔮"
+          label="What-If"
+          onPress={() => router.push('/what-if')}
+        />
+      </View>
+
       <View className="mt-5 mb-2">
         <Button
           title={todayJournal ? 'Edit today’s journal' : 'Log today’s journal'}
@@ -143,5 +196,26 @@ export default function Dashboard() {
         />
       </View>
     </Screen>
+  );
+}
+
+function ToolButton({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: string;
+  label: string;
+  onPress: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      className="bg-bg-card border border-border-subtle rounded-2xl p-4 items-center active:opacity-80"
+      style={{ width: '47%' }}
+    >
+      <Text className="text-2xl mb-1">{icon}</Text>
+      <Text className="text-text font-semibold">{label}</Text>
+    </Pressable>
   );
 }

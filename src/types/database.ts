@@ -224,6 +224,75 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['weather_daily']['Insert']>;
         Relationships: [];
       };
+      experiments: {
+        Row: {
+          id: string;
+          user_id: string;
+          title: string;
+          hypothesis: string;
+          condition_key: string;
+          start_date: string;
+          end_date: string | null;
+          target_days: number;
+          status: string;
+          result_summary: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          title: string;
+          hypothesis?: string;
+          condition_key: string;
+          start_date: string;
+          end_date?: string | null;
+          target_days?: number;
+          status?: string;
+          result_summary?: string | null;
+        };
+        Update: Partial<Database['public']['Tables']['experiments']['Insert']>;
+        Relationships: [];
+      };
+      fasts: {
+        Row: {
+          id: string;
+          user_id: string;
+          start_at: string;
+          end_at: string | null;
+          target_hours: number;
+          note: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          start_at: string;
+          end_at?: string | null;
+          target_hours?: number;
+          note?: string;
+        };
+        Update: Partial<Database['public']['Tables']['fasts']['Insert']>;
+        Relationships: [];
+      };
+      bloodwork_panels: {
+        Row: {
+          id: string;
+          user_id: string;
+          date: string;
+          markers: Json;
+          notes: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          date: string;
+          markers?: Json;
+          notes?: string;
+        };
+        Update: Partial<Database['public']['Tables']['bloodwork_panels']['Insert']>;
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

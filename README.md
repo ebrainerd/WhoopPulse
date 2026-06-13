@@ -26,6 +26,17 @@ stress. Dark, minimal UI.
 - **Accuracy tracking** — predictions are reconciled against actual recovery so
   you can see how accurate the model has been (`±6 pts lately`).
 - **Insights** — top drivers (correlations), long-term trends, and CSV export.
+- **Personalized model** — a per-user ridge regression learns your own factor
+  weights from history and blends with the rule engine as data accumulates.
+- **Protocol experiments** — structured n-of-1 self-tests ("no alcohol for 14
+  days") that measure a behavior's effect on recovery vs your baseline.
+- **Morning briefing** — a daily screen: yesterday's predicted-vs-actual, model
+  accuracy, whether following actions helped, and today's top 3 actions.
+- **Bloodwork analysis** — enter a comprehensive lab panel and get flagged
+  markers with supplement / nutrition / exercise / mindfulness / lifestyle
+  guidance (educational, not medical advice).
+- **Fasting tracker** — start a fast with a live timer, target ring, and the
+  metabolic stages your body moves through (fed → ketosis → autophagy …).
 
 ---
 
@@ -114,6 +125,9 @@ Edge Function can reuse the logic for heavier server-side computation later.
 | `predictions`         | `date, predicted_score, actual_score, confidence, baseline, factors` |
 | `recommendations_log` | Which actions were suggested and followed                    |
 | `weather_daily`       | Cached forecast snapshots                                    |
+| `experiments`         | n-of-1 self-tests (condition, window, status, result)       |
+| `fasts`               | Fasting sessions (start/end, target hours)                  |
+| `bloodwork_panels`    | Lab panels (`markers` JSON) for analysis                    |
 
 All tables are protected by **Row Level Security** (owner-only access). A trigger
 auto-creates a `profiles` row on signup.
@@ -134,8 +148,8 @@ npm install
 ### 2. Create a Supabase project
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. Apply the schema: run the SQL in `supabase/migrations/0001_init.sql` in the
-   Supabase SQL editor, or with the CLI:
+2. Apply the schema: run the SQL in `supabase/migrations/` (`0001_init.sql` then
+   `0002_features.sql`) in the Supabase SQL editor, or with the CLI:
    ```bash
    supabase link --project-ref <your-ref>
    supabase db push

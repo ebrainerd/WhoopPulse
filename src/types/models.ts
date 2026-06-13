@@ -151,3 +151,40 @@ export interface WhoopConnection {
   lastSyncedAt: string | null;
   scopes: string | null;
 }
+
+export type ExperimentStatus = 'active' | 'completed' | 'abandoned';
+
+export interface Experiment {
+  id?: string;
+  userId?: string;
+  title: string;
+  hypothesis: string;
+  /** Behavior held constant during the experiment (see EXPERIMENT_CONDITIONS). */
+  conditionKey: string;
+  startDate: string;
+  endDate: string | null;
+  targetDays: number;
+  status: ExperimentStatus;
+  resultSummary: string | null;
+  createdAt?: string;
+}
+
+export interface Fast {
+  id?: string;
+  userId?: string;
+  startAt: string;
+  endAt: string | null;
+  targetHours: number;
+  note: string;
+  createdAt?: string;
+}
+
+export interface BloodworkPanel {
+  id?: string;
+  userId?: string;
+  date: string;
+  /** marker key -> value (units defined in the marker catalog). */
+  markers: Record<string, number>;
+  notes: string;
+  createdAt?: string;
+}
