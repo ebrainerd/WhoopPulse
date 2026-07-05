@@ -1,11 +1,12 @@
-# Baseline — Technical Specification
+# Receipts — Technical Specification
 
-> Working name: **Baseline** (see `03-brand-and-design.md` for naming rationale and
+> Name: **Receipts** (see `03-brand-and-design.md` for naming rationale and
 > alternatives). A read-only Instagram performance co-pilot for creators with
-> 5K–500K followers. Three pillars: **Archive** (keep every metric forever, past
-> Instagram's 90-day wall), **Explain** (plain-English diagnosis against the
-> creator's own baselines), **Prove** (a live, API-verified media kit and rate
-> card that turns the data into brand-deal income).
+> 5K–500K followers, delivered as a **mobile app** (iOS + Android). Three
+> pillars: **Archive** (keep every metric forever, past Instagram's 90-day
+> wall), **Explain** (plain-English diagnosis against the creator's own
+> baselines), **Prove** (a live, API-verified media kit and rate card that
+> turns the data into brand-deal income).
 
 ---
 
@@ -42,8 +43,12 @@
 
 ### 1.3 Platform targets
 
-iOS, Android, and Web from a single Expo codebase. Web serves two audiences:
-the creator dashboard and the **public media kit pages** viewed by brands.
+**Mobile-only for creators: iOS and Android from a single Expo codebase.**
+There is no web dashboard. The one web surface is the **public media kit
+page** viewed by brands — a small, separate Next.js service (§8.4), because
+kit links must open in any browser, unfurl with OG previews, and print to PDF.
+This split keeps the app codebase focused and lets kit pages be
+server-rendered without dragging the whole app onto the web.
 
 ---
 
@@ -51,24 +56,24 @@ the creator dashboard and the **public media kit pages** viewed by brands.
 
 | Layer | Choice | Rationale |
 | --- | --- | --- |
-| App framework | **Expo SDK 54, React Native, TypeScript** | One codebase for iOS/Android/Web; SDK 54 works with App Store Expo Go for free device testing |
-| Routing | **Expo Router** (file-based) | Public kit routes and app routes in one tree |
+| Mobile app | **Expo SDK 54, React Native, TypeScript** — iOS + Android only | Single codebase; SDK 54 works with App Store Expo Go for free device testing; EAS Build for store binaries |
+| Routing | **Expo Router** (file-based) | Deep links (`receipts://post/[id]`) from push notifications |
 | Styling | **NativeWind** (Tailwind), dark-first theme | Fast iteration; tokens defined in `03-brand-and-design.md` |
 | Backend | **Supabase** — Auth, Postgres (+ RLS), Edge Functions, Storage, `pg_cron` | Managed Postgres with row-level security; Edge Functions hold Meta secrets server-side; cron drives the sync engine |
-| Web hosting | **Vercel** (static export of Expo web + SPA rewrites) | Same pattern as prior projects; media kit pages get a custom domain |
+| Kit web service | **Next.js (App Router) on Vercel** — the only web surface | Server-rendered public kit pages at a custom domain, OG-image generation, print-to-PDF route; reads published-kit data via a narrow service role |
 | LLM | Server-side via Edge Function; small/cheap model class (e.g. Claude Haiku tier or GPT mini tier) | One structured call per weekly report; narration only, never raw analysis (§7) |
 | Push | `expo-notifications` + Expo Push Service | Velocity alerts, weekly-report-ready |
 | Charts | Custom `react-native-svg` line/bar/spark charts | Full control over the velocity-curve and baseline-band visuals |
 | Error tracking | Sentry (`sentry-expo`) | Crash + Edge Function error reporting |
 | Product analytics | PostHog (self-serve funnel: connect → backfill → first report → kit published) | Measures the activation loop |
-| Payments | **RevenueCat** wrapping StoreKit / Play Billing, + Stripe for web | One subscription state across platforms; cancellation possible from every device (a core brand promise — see business doc) |
+| Payments | **RevenueCat** wrapping StoreKit / Play Billing | One subscription state across both stores; users can also cancel via Apple/Google subscription settings (supports the honest-billing brand promise — see business doc) |
 
 ### 2.1 Environments
 
 - `dev` — local Expo + a dev Supabase project + Meta app in **Development Mode**
   (works with our own test creator accounts before App Review).
 - `staging` — TestFlight/internal track + staging Supabase.
-- `prod` — App Store / Play Store / production web.
+- `prod` — App Store / Play Store + the production kit web service.
 
 Secrets live in Supabase Edge Function secrets (`META_APP_SECRET`,
 `LLM_API_KEY`) and are never shipped to the client. Client-side env vars are
@@ -223,7 +228,7 @@ Activation target: **connect → see first insight in under 5 minutes**.
    User adds rates later; kit stays unpublished until they hit *Publish*.
 8. **Land on Pulse** (home) with a subtle 4-step tour overlay.
 
-Trial mechanics on signup (card-optional 14-day full trial) are specified in
+Trial mechanics on signup (no-card 14-day full trial) are specified in
 `02-business-model.md`.
 
 ---
@@ -256,7 +261,7 @@ Weekly per connection (and once at onboarding using lifetime data):
   must reference the numbers provided; no advice not derivable from a finding;
   ≤ 300 words; plain English, no hype.*
 - Output stored in `reports.narrative`; the UI renders each paragraph with a
-  "show the math" expander displaying the underlying finding values.
+  "show the receipts" expander displaying the underlying finding values.
 - Cost control: one small-model call per user per week (~fractions of a cent);
   hard monthly token budget per user; graceful fallback = render findings as
   templated bullet points if the LLM call fails.
@@ -284,7 +289,7 @@ Top-to-bottom:
 3. **This week strip** — three stat chips vs. prior week: reach, engagement
    rate, followers gained; each colored by direction.
 4. **Latest insight card** — the single highest-magnitude finding from the most
-   recent report, one sentence + "show the math" chevron.
+   recent report, one sentence + "show the receipts" chevron.
 5. **Kit activity card** (if kit published) — "Your kit was viewed 3× this week
    · 1 contact click", tap → Kit tab.
 
@@ -310,7 +315,7 @@ share-to-kit button ("feature this post on your media kit").
 
 1. **Report header** — week range, account summary sentence.
 2. **Narrative section** — the LLM narration, paragraph cards, each with
-   "show the math" expander revealing the finding's numbers (effect size, n,
+   "show the receipts" expander revealing the finding's numbers (effect size, n,
    CI) and a mini chart.
 3. **Deviations list** — every |z| ≥ 1.5 post this week.
 4. **Watchlist** — ongoing correlations the engine is tracking but that
@@ -322,8 +327,9 @@ share-to-kit button ("feature this post on your media kit").
 
 Editor with live preview (creator-facing, dark):
 
-1. **Publish state row** — public URL `baseline.app/kit/@handle`, copy button,
-   published toggle, theme picker (light default / dark / brand-color accent).
+1. **Publish state row** — public URL `getreceipts.app/kit/@handle`, copy
+   button, published toggle, theme picker (light default / dark / brand-color
+   accent).
 2. **Section manager** — draggable cards, each with visibility toggle:
    About (photo, niche, location, bio), Verified stats (followers, avg reach,
    engagement rate, audience demographics — always sourced live from the API,
@@ -334,12 +340,14 @@ Editor with live preview (creator-facing, dark):
    niche + engagement — see business doc), Contact (email or booking link).
 3. **Kit analytics panel** — views over time, referrers, contact-click count.
 
-**Public kit page** (`/kit/[slug]`, no auth, SSG-friendly): clean one-scroll
-light page, OG image auto-generated (handle + headline stats) so the link
-unfurls well in email/DMs/Slack; "Verified" badges on API-sourced numbers;
-a subtle "Made with Baseline" footer (the growth loop — free-tier kits keep
-this; paid can restyle it). PDF export renders the same layout via a
-server-side print route.
+**Public kit page** (`/kit/[slug]` on the Next.js kit service — the product's
+only web surface, §1.3): clean one-scroll light page, server-rendered with an
+auto-generated OG image (handle + headline stats) so the link unfurls well in
+email/DMs/Slack; "Verified" badges on API-sourced numbers; a subtle "Made with
+Receipts" footer (the growth loop — free-tier kits keep this; paid can restyle
+it). PDF export renders the same layout via a server-side print route. The
+service reads only published-kit fields through a narrow service role; kit
+views/clicks are written back to `kit_views`.
 
 ### 8.5 Settings
 
@@ -398,8 +406,8 @@ except token alerts.
 | **0 — API spike** | Meta dev-mode app; `meta-auth` + a throwaway sync script against 2–3 team-owned creator accounts; confirm per-format insight payloads, watch-time fields, Trial Reel visibility, demographics thresholds | A markdown doc of the actual payloads; schema finalized |
 | **1 — Archive slice** | Auth, connect flow, backfill, sync loops, Library + post detail with z-score badges, Pulse without insight card | Dogfooders see their real data end-to-end |
 | **2 — Explain** | Baselines + velocity curves, hot-post alerts, stats engine, LLM narration, Report tab, onboarding instant-insights | First weekly report that earns a "huh, I didn't know that" from a test creator |
-| **3 — Prove** | Kit editor, public kit page + OG images, kit analytics, PDF export, rate-hint benchmarks | A test creator sends their kit to a real brand |
-| **4 — Commercial** | RevenueCat + Stripe, trial/paywall states, Meta App Review submission, marketing site | App Review approved; first external cohort onboarded |
+| **3 — Prove** | Kit editor (in-app), Next.js kit service (public page + OG images + PDF), kit analytics, rate-hint benchmarks | A test creator sends their kit to a real brand |
+| **4 — Commercial** | RevenueCat (StoreKit/Play Billing), trial/paywall states, Meta App Review submission, EAS store builds, marketing site | App Review approved; TestFlight/Play internal cohort onboarded |
 
 Testing: unit tests on the stats engine (golden-file findings for synthetic
 accounts), contract tests on Meta payload parsing (recorded fixtures from the

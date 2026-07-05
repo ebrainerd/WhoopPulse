@@ -1,4 +1,4 @@
-# Baseline — Brand & Design System
+# Receipts — Brand & Design System
 
 > Name, logo direction, typography, color, and voice — one coherent identity
 > across the app, the public media kit pages, and the marketing site.
@@ -7,44 +7,54 @@
 
 ## 1. Name
 
-### 1.1 Primary recommendation: **Baseline**
+### 1.1 Primary recommendation: **Receipts**
 
-The name *is* the product thesis. Everything in the app is measured against
-the creator's own baseline — the z-score badges, the velocity bands, the
-weekly report. It also carries the second meaning we want: *your* baseline,
-your foundation, the numbers your career stands on. It's short, spellable,
-pronounceable in every market, and it names a concept the user learns *from
-using the product* — the brand teaches the mental model.
+Creator-internet slang, used exactly the way the product works: *receipts* are
+proof. "Bring the receipts." "She's got receipts." The name covers all three
+pillars in one word creators already use daily:
+
+- **Prove** — the media kit *is* your receipts: verified numbers a brand can
+  trust instead of screenshots.
+- **Explain** — every claim in a weekly report is backed by its numbers; the
+  expander that reveals the math is literally labeled *"Show the receipts."*
+- **Archive** — receipts are records you keep. Instagram shreds yours after
+  90 days; we file them forever.
+
+It's fun without being unserious, it's memorable in a sentence ("send them
+your Receipts"), and it gives marketing endless clean copy ("Never screenshot
+your stats again — just send Receipts").
 
 Practical notes:
 
-- "Baseline" is a common English word; expect to brand as a compound domain:
-  `getbaseline.app`, `usebaseline.com`, `baseline.so`, or `baselinehq.com`
-  (verify availability at purchase time; also check App Store title collision
-  — differentiate as **"Baseline — Creator Analytics"**).
-- Social handles: `@getbaseline` / `@baselinehq`.
-- Trademark search needed in class 42 (SaaS); "Baseline" appears in other
-  categories (construction software, med-tech) which is generally survivable
-  for a distinct class but needs a proper check before launch spend.
+- Domains: `getreceipts.app`, `receipts.so`, `keepreceipts.app`,
+  `receiptshq.com` (verify availability at purchase time). Handles:
+  `@getreceipts` / `@receiptshq`.
+- App Store search for "receipts" surfaces expense-scanner apps, so the store
+  listing title must be the compound **"Receipts — Creator Analytics"** and
+  ASO keywords lean on "instagram analytics", "media kit", "creator".
+- Trademark search needed in class 42 (SaaS); the word is common in
+  expense-tracking (class overlap risk is the main thing counsel should
+  check before launch spend).
 
 ### 1.2 Shortlist considered (kept as fallbacks)
 
 | Name | For | Against |
 | --- | --- | --- |
-| **Baseline** | Names the core mechanic; teachable; calm, credible | Generic word; compound domain needed |
-| **Tidemark** | High-water mark metaphor fits archiving records | Softer meaning; less obvious |
-| **Crest** | Peaks, momentum, clean 5 letters | Crowded trademark space; toothpaste adjacency |
-| **Vantage** | Seeing clearly, elevated view | Heavily used across SaaS |
-| **Prooflab** | Nails the media-kit/verification pillar | Ignores the analytics half; "lab" is startup-cliché |
+| **Receipts** | Creator slang for proof; covers all three pillars; endless good copy | Expense-app adjacency in store search; needs compound domain |
+| **Heatcheck** | Fun basketball slang ("is this post hot?"); fits velocity alerts perfectly | Names only the breakout feature, not the kit/archive |
+| **Bragsheet** | "Brag sheet" is literally what creators call a media kit; playful | Ignores the analytics half; slightly jokey for billing emails |
+| **Hotstreak** | Energetic, memorable | Collides with a sports-betting brand; wrong-category vibes |
+| **Sparkline** | Charming chart pun; data-native | Insider term; less fun to non-data people |
 
-Decision rule applied: prefer the name that describes the *user's mental
-model* over names describing our features. Baseline wins.
+Decision rule applied: prefer a word creators already say, with the meaning we
+want, over invented names. Receipts wins.
 
 ### 1.3 Tagline
 
-Primary: **"Know your numbers. Own your worth."**
-Secondary/marketing: "Your Instagram history, explained — and turned into
-proof brands trust."
+Primary: **"Your growth. With receipts."**
+Secondary/marketing: "Analytics that explain your Instagram — and prove it to
+brands." Campaign line for the kit feature: "Never screenshot your stats
+again."
 
 ---
 
@@ -52,24 +62,27 @@ proof brands trust."
 
 Three concepts, in preference order (commission real marks from these briefs):
 
-1. **The Rising Baseline (primary).** A horizontal line (the baseline) with a
-   single point breaking above it — rendered as a small filled circle floating
-   above the line's right end, like a data point going above baseline. Reads
-   as: chart, typographic baseline, and "above your usual" all at once.
-   Works at 16px favicon size. Wordmark version: lowercase `baseline` set in
-   the display face, where the crossbar of the final **e** extends right as
-   the line, with the dot above it.
-2. **The Band.** Two parallel horizontal lines (the p25–p75 band from the
-   velocity chart) with a bold stroke arcing above the top line. More
-   distinctive, slightly more complex; strong app-icon potential.
+1. **The Receipt Tape (primary).** A rounded-top rectangle with a subtle
+   zigzag perforated bottom edge — the universal receipt silhouette — holding
+   a single rising spark-line inside it. Reads as receipt + growth chart in
+   one glance, works at 16px favicon size, and gives the app icon a shape no
+   analytics competitor has (they're all circles and gradient squares).
+   Wordmark: lowercase `receipts` in the display face with the final **s**
+   ending in a small tear-off notch.
+2. **The Paid Stamp.** A slightly rotated rounded-rectangle outline stamp
+   containing a checkmark-spark hybrid — the "verified" energy of the media
+   kit. Strong on kit pages next to verified numbers; slightly weaker as a
+   standalone app icon.
 3. **The Tally.** A minimal five-bar tally where the fifth stroke is the
-   brand-accent diagonal — archive/record-keeping connotation. Cleanest
-   monochrome behavior, weakest conceptual tie.
+   brand-accent diagonal — record-keeping connotation. Cleanest monochrome
+   behavior, weakest fun factor.
 
-App icon: concept 1 mark, accent-on-ink (mint dot + off-white line on the
-near-black background), no wordmark, generous margins. Avoid gradients —
+App icon: concept 1 mark, accent-on-ink (mint spark-line + off-white tape on
+the near-black background), no wordmark, generous margins. Avoid gradients —
 every competitor in this space (and Instagram itself) is gradient-heavy;
-flat + dark is the differentiation.
+flat + dark is the differentiation. The receipt-paper texture idea also pays
+off in the light theme (§3.2): kit pages render on a warm paper background,
+so the brand metaphor is literal where brands see it.
 
 ---
 
@@ -191,7 +204,7 @@ Emoji: only in push notifications, only 🔥 (breakout) and 👀 (kit contact),
 never in reports or the kit. Exclamation marks: budget of ~one per screen.
 
 Microcopy details that carry the brand: the report's expander is labeled
-**"Show the math"** (not "Learn more"); the paywall headline is **"Keep your
+**"Show the receipts"** (not "Learn more"); the paywall headline is **"Keep your
 history running"** (not "Upgrade now"); the cancellation screen's final button
 is simply **"Cancel subscription"** — one tap, works, no guilt copy beneath it.
 
