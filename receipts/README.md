@@ -79,6 +79,6 @@ scaffold the app, schema, and screens with seeded demo data.
 
 ## Status
 
-Design-phase documents; no application code yet. These files are
-self-contained: copying the contents of this folder to the root of a fresh
-repository is the intended starting point for implementation.
+Design-phase documents; no application code yet. This repository is the
+implementation home for Receipts — the next step is Phase 0 of the technical
+spec (Meta Graph API spike), followed by scaffolding the Expo app.
